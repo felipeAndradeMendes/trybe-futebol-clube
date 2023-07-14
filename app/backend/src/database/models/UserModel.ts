@@ -10,6 +10,6 @@ export default class UserModel implements IUserModel {
     if (!dbData) {
       return null;
     }
-    return dbData;
+    return dbData.dataValues;
   }
 }

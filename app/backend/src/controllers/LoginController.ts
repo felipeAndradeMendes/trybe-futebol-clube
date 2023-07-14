@@ -17,7 +17,8 @@ export default class LoginController {
     if (serviceResponse.status !== 'SUCCESSFUL') {
       return res.status(mapStatusHTTP(serviceResponse.status)).json(serviceResponse.data);
     }
-    // const token = this.jwtToken(pa)
-    return res.status(200).json({ message: 'success' });
+    console.log(serviceResponse);
+    const token = this.jwtToken.sign(serviceResponse.data);
+    return res.status(200).json({ token });
   }
 }
