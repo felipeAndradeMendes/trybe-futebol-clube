@@ -5,6 +5,7 @@ import chaiHttp = require('chai-http');
 
 import { app } from '../app';
 import * as bcrypt from 'bcryptjs';
+import * as jwt from 'jsonwebtoken';
 import SequelizeUser from '../database/models/SequelizeUser';
 import {
   user,
@@ -13,6 +14,7 @@ import {
   noPasswordLoginBody,
   invalidEmailFormatLoginBody,
   invalidPasswordFormatLoginBody,
+  genericToken,
 } from './mocks/login.mock';
 
 chai.use(chaiHttp);
@@ -87,6 +89,44 @@ describe('TESTES ROTA LOGIN', () => {
     
     expect(status).to.equal(401);
     expect(body).to.deep.equal({ message: 'Invalid email or password' });
+  });
+
+  it('Retorna erro quando token não é passado na requisição da rota', async function () {
+      const tokenError = { message: 'Token not found' };
+      sinon.stub(jwt, 'sign').throws(tokenError);
+
+    const { status, body } = await chai
+    .request(app)
+    .get('/login/role')
+    
+    expect(status).to.equal(401);
+    expect(body).to.deep.equal(tokenError);
+  });
+
+  it('Retorna erro quando o token é invalido', async function () {
+    const tokenError = { message: 'Token must be a valid token' };
+    sinon.stub(jwt, 'sign').throws(tokenError);
+
+    const { status, body } = await chai
+    .request(app)
+    .get('/login/role')
+    .set('Authorization', 'invalid_token')
+    
+    expect(status).to.equal(401);
+    expect(body).to.deep.equal({ message: 'Token must be a valid token' });
+  });
+
+  it('Retorna role com sucesso ao validar o token', async function () {
+    const tokenMessage = { message: 'Token must be a valid token' };
+    sinon.stub(jwt, 'sign').returns(user as any);
+
+    const { status, body } = await chai
+    .request(app)
+    .get('/login/role')
+    .set('Authorization', genericToken)
+    
+    expect(status).to.equal(200);
+    expect(body).to.deep.equal({ role: 'user'});
   });
   
 });

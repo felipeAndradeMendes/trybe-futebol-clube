@@ -44,12 +44,6 @@ export default class LoginValidation {
     }
 
     const tokenData = authorization.split(' ');
-    // const validation = LoginValidation.jwtUtils.verify(tokenData[1]);
-    // if (!validation) {
-    //   return res.status(401).json({ message: 'Token must be a valid token' });
-    // }
-    // res.locals.user = validation;
-    // next();
     try {
       const validation = LoginValidation.jwtUtils.verify(tokenData[1]);
       res.locals.user = validation;

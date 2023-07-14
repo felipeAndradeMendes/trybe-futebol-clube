@@ -29,6 +29,8 @@ const invalidPasswordFormatLoginBody = {
   password: '123456',
 }
 
+const genericToken = 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwidXNlcm5hbWUiOiJVc2VyIiwicm9sZSI6InVzZXIiLCJlbWFpbCI6InVzZXJAdXNlci5jb20iLCJwYXNzd29yZCI6IiQyYSQwOCRZOEFiaThqWHZzWHlxbS5ybXAwQi51UUJBNXFVejdUNkdobGcvQ3ZWci9nTHhZajVVQVpWTyIsImlhdCI6MTY4OTM2NzM3NH0.SY6qsdojd1L7g4trmIkZZ7VvaeunY9tl3Ucn8WLsrNI';
+
 export {
   user,
   validLoginBody,
@@ -36,4 +38,5 @@ export {
   noPasswordLoginBody,
   invalidEmailFormatLoginBody,
   invalidPasswordFormatLoginBody,
+  genericToken,
 };

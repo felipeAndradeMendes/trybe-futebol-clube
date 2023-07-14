@@ -32,9 +32,6 @@ export default class LoginController {
 
   public static getRole(req: Request, res: Response): Response {
     const { user } = res.locals;
-    // private userRole: string = res.locals.role
-
     return res.status(200).json({ role: user.role });
-    // console.log('USER: ', user);
   }
 }
