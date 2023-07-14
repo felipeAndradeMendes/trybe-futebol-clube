@@ -9,7 +9,7 @@ export default class UserService {
 
   public async getUserByEmail(email: string): Promise<ServiceResponse<IUser>> {
     const user = await this.userModel.findByEmail(email);
-
+    // console.log('USER SERVICE:', user);
     if (!user) {
       return { status: 'UNAUTHORIZED', data: { message: 'Invalid email or password' } };
     }

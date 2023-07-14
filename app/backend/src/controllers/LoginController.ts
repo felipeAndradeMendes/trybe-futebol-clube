@@ -25,7 +25,7 @@ export default class LoginController {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    console.log(serviceResponse);
+    // console.log(serviceResponse);
     const token = this.jwtToken.sign(serviceResponse.data);
     return res.status(200).json({ token });
   }
