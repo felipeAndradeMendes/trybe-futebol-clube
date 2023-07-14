@@ -14,7 +14,7 @@ export default class LoginValidation {
     }
 
     if (!LoginValidation.emailRegex.test(email)) {
-      return res.status(404).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
 
     next();
@@ -28,7 +28,7 @@ export default class LoginValidation {
     }
 
     if (password.length < LoginValidation.passwordMinLength) {
-      return res.status(404).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
 
     next();

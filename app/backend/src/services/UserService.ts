@@ -11,7 +11,7 @@ export default class UserService {
     const user = await this.userModel.findByEmail(email);
 
     if (!user) {
-      return { status: 'NOT_FOUND', data: { message: 'User not found' } };
+      return { status: 'UNAUTHORIZED', data: { message: 'Invalid email or password' } };
     }
 
     return { status: 'SUCCESSFUL', data: user };
