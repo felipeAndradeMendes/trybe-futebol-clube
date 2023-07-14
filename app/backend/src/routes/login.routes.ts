@@ -12,4 +12,10 @@ router.post(
   (req: Request, res: Response) => loginController.login(req, res),
 );
 
+router.get(
+  '/role',
+  LoginValidation.validateJWT,
+  (req: Request, res: Response) => LoginController.getRole(req, res),
+);
+
 export default router;

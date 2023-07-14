@@ -1,9 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import { ILogin } from '../Interfaces/Login';
+import JwtToken from '../utils/JwtToken';
 
 export default class LoginValidation {
   protected static emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   protected static passwordMinLength = 7;
+  private static jwtUtils = new JwtToken();
 
   static validateEmail(req: Request, res: Response, next: NextFunction): Response | void {
     const { email } = req.body as ILogin;
@@ -32,5 +34,28 @@ export default class LoginValidation {
     }
 
     next();
+  }
+
+  static validateJWT(req: Request, res: Response, next: NextFunction): Response | void {
+    const { authorization } = req.headers;
+
+    if (!authorization) {
+      return res.status(401).json({ message: 'Token not found' });
+    }
+
+    const tokenData = authorization.split(' ');
+    // const validation = LoginValidation.jwtUtils.verify(tokenData[1]);
+    // if (!validation) {
+    //   return res.status(401).json({ message: 'Token must be a valid token' });
+    // }
+    // res.locals.user = validation;
+    // next();
+    try {
+      const validation = LoginValidation.jwtUtils.verify(tokenData[1]);
+      res.locals.user = validation;
+      next();
+    } catch (error) {
+      return res.status(401).json({ message: 'Token must be a valid token' });
+    }
   }
 }

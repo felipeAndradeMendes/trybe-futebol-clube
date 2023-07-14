@@ -29,4 +29,12 @@ export default class LoginController {
     const token = this.jwtToken.sign(serviceResponse.data);
     return res.status(200).json({ token });
   }
+
+  public static getRole(req: Request, res: Response): Response {
+    const { user } = res.locals;
+    // private userRole: string = res.locals.role
+
+    return res.status(200).json({ role: user.role });
+    // console.log('USER: ', user);
+  }
 }

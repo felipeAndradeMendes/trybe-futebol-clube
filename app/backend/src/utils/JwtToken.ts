@@ -8,5 +8,7 @@ export default class JwtToken {
     return jwt.sign(payload, this.secret);
   }
 
-  // protected verify()
+  public verify(token: string): JwtPayload | string {
+    return jwt.verify(token, this.secret) as JwtPayload;
+  }
 }
