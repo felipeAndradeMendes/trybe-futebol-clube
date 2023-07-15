@@ -5,7 +5,14 @@ import SequelizeTeam from './SequelizeTeam';
 export default class MatchModel implements IMatchModel {
   private model = SequelizeMatch;
 
-  async findAll(): Promise<IMatch[]> {
+  static filterMatchesByProgress(matches: IMatch[], progress: string) {
+    const filterMatches = matches.filter((match) => (
+      match.inProgress.toString() === progress));
+
+    return filterMatches;
+  }
+
+  async findAll(matchProgress?: string): Promise<IMatch[]> {
     const dbData = await this.model.findAll(
       {
         include: [
@@ -22,6 +29,8 @@ export default class MatchModel implements IMatchModel {
         ],
       },
     );
+    if (matchProgress) { return MatchModel.filterMatchesByProgress(dbData, matchProgress); }
+
     return dbData;
   }
 

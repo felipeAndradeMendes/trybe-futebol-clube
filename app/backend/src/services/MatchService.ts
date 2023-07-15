@@ -7,18 +7,18 @@ export default class MatchService {
     private matchModel: IMatchModel = new MatchModel(),
   ) { }
 
-  public async getAllMatches(): Promise<ServiceResponse<IMatch[]>> {
-    const allMatches = await this.matchModel.findAll();
+  public async getAllMatches(matchProgress?: string): Promise<ServiceResponse<IMatch[]>> {
+    const allMatches = await this.matchModel.findAll(matchProgress);
     return { status: 'SUCCESSFUL', data: allMatches };
   }
 
-  public async getAllInProgress(): Promise<ServiceResponse<IMatch[]>> {
-    const allInProgress = await this.matchModel.findAllInProgress();
+  // public async getAllInProgress(): Promise<ServiceResponse<IMatch[]>> {
+  //   const allInProgress = await this.matchModel.findAllInProgress();
 
-    if (allInProgress.length === 0) {
-      return { status: 'NOT_FOUND', data: { message: 'There are no matches in progress' } };
-    }
+  //   if (allInProgress.length === 0) {
+  //     return { status: 'NOT_FOUND', data: { message: 'There are no matches in progress' } };
+  //   }
 
-    return { status: 'SUCCESSFUL', data: allInProgress };
-  }
+  //   return { status: 'SUCCESSFUL', data: allInProgress };
+  // }
 }
