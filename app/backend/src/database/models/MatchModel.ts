@@ -24,4 +24,13 @@ export default class MatchModel implements IMatchModel {
     );
     return dbData;
   }
+
+  async findAllInProgress(): Promise<IMatch[]> {
+    const dbData = await this.model.findAll(
+      {
+        where: { inProgress: true },
+      },
+    );
+    return dbData;
+  }
 }
