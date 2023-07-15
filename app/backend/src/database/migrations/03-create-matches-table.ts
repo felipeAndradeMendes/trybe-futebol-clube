@@ -13,7 +13,7 @@ export default {
       homeTeamId: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        field: 'hoem_team_id',
+        field: 'home_team_id',
       },
       homeTeamGoals: {
         type: DataTypes.INTEGER,
