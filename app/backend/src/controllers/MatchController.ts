@@ -8,6 +8,6 @@ export default class MatchController {
 
   public async getAllMatches(req: Request, res: Response): Promise<Response> {
     const serviceResponse = await this.matchService.getAllMatches();
-    return res.status(200).json(serviceResponse);
+    return res.status(200).json(serviceResponse.data);
   }
 }
