@@ -9,5 +9,5 @@ export interface IMatch {
 
 export interface IMatchModel {
   findAll(matchProgress?: string): Promise<IMatch[]>;
-  // findAllInProgress(matchProgress: string): Promise<IMatch[]>;
+  finishMatch(id: number): Promise<number | null>;
 }

@@ -5,6 +5,7 @@ import SequelizeTeam from './SequelizeTeam';
 export default class MatchModel implements IMatchModel {
   private model = SequelizeMatch;
 
+  // Implementar alternativa que já traga do bd os resultados buscados;
   static filterMatchesByProgress(matches: IMatch[], progress: string) {
     const filterMatches = matches.filter((match) => (
       match.inProgress.toString() === progress));
@@ -34,12 +35,26 @@ export default class MatchModel implements IMatchModel {
     return dbData;
   }
 
-  async findAllInProgress(): Promise<IMatch[]> {
-    const dbData = await this.model.findAll(
-      {
-        where: { inProgress: true },
-      },
+  // async findAllInProgress(): Promise<IMatch[]> {
+  //   const dbData = await this.model.findAll(
+  //     {
+  //       where: { inProgress: true },
+  //     },
+  //   );
+  //   return dbData;
+  // }
+
+  async finishMatch(id: number): Promise<number | null> {
+    const [dbData] = await this.model.update(
+      { inProgress: false },
+      { where: { id } },
     );
+
+    if (dbData === 0) {
+      return null;
+    }
+    console.log('DB DATA: ', dbData);
+
     return dbData;
   }
 }

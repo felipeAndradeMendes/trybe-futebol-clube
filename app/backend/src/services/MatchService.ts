@@ -1,6 +1,6 @@
 import MatchModel from '../database/models/MatchModel';
 import { IMatch, IMatchModel } from '../Interfaces/Match';
-import { ServiceResponse } from '../Interfaces/ServiceResponse';
+import { ServiceMessage, ServiceResponse } from '../Interfaces/ServiceResponse';
 
 export default class MatchService {
   constructor(
@@ -12,13 +12,18 @@ export default class MatchService {
     return { status: 'SUCCESSFUL', data: allMatches };
   }
 
-  // public async getAllInProgress(): Promise<ServiceResponse<IMatch[]>> {
-  //   const allInProgress = await this.matchModel.findAllInProgress();
+  public async finishMatch(id: number): Promise<ServiceResponse<ServiceMessage>> {
+    const modelResponse = await this.matchModel.finishMatch(id);
 
-  //   if (allInProgress.length === 0) {
-  //     return { status: 'NOT_FOUND', data: { message: 'There are no matches in progress' } };
-  //   }
+    if (!modelResponse) {
+      return {
+        status: 'CONFLICT',
+        data: { message: `A partida com id ${id} não pode ser encerrada ou já está encerrada` } };
+    }
 
-  //   return { status: 'SUCCESSFUL', data: allInProgress };
-  // }
+    return {
+      status: 'SUCCESSFUL',
+      data: { message: 'Finished' },
+    };
+  }
 }
