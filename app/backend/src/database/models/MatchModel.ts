@@ -85,15 +85,15 @@ export default class MatchModel implements IMatchModel {
     return dbData;
   }
 
-  async findById(id: number): Promise<IMatch | null> {
-    const dbData = await this.model.findByPk(id);
+  // async findById(id: number): Promise<IMatch | null> {
+  //   const dbData = await this.model.findByPk(id);
 
-    console.log('TESTA TEAM ID PRA VER SE EXISTE:', dbData);
+  //   console.log('TESTA TEAM ID PRA VER SE EXISTE:', dbData);
 
-    if (!dbData) {
-      return null;
-    }
+  //   if (!dbData) {
+  //     return null;
+  //   }
 
-    return dbData;
-  }
+  //   return dbData;
+  // }
 }

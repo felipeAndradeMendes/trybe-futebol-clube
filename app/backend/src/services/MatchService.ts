@@ -1,15 +1,29 @@
+import TeamModel from '../database/models/TeamModel';
 import MatchModel from '../database/models/MatchModel';
 import { IMatch, IMatchCreateBody, IMatchModel, IMatchUpdateBody } from '../Interfaces/Match';
 import { ServiceMessage, ServiceResponse } from '../Interfaces/ServiceResponse';
+import { ITeamModel } from '../Interfaces/Team';
 
 export default class MatchService {
   constructor(
     private matchModel: IMatchModel = new MatchModel(),
+    private teamModel: ITeamModel = new TeamModel(),
   ) { }
 
+  // private async teamsExists(homeTeamId: number, awayTeamId: number): Promise<boolean> {
+  //   const isHomeTeam = await this.matchModel.findById(homeTeamId);
+  //   const isAwayTeam = await this.matchModel.findById(awayTeamId);
+
+  //   if (isHomeTeam === null || isAwayTeam === null) {
+  //     return false;
+  //   }
+
+  //   return true;
+  // }
+
   private async teamsExists(homeTeamId: number, awayTeamId: number): Promise<boolean> {
-    const isHomeTeam = await this.matchModel.findById(homeTeamId);
-    const isAwayTeam = await this.matchModel.findById(awayTeamId);
+    const isHomeTeam = await this.teamModel.findById(homeTeamId);
+    const isAwayTeam = await this.teamModel.findById(awayTeamId);
 
     if (isHomeTeam === null || isAwayTeam === null) {
       return false;

@@ -58,14 +58,23 @@ const createMatchBodyRequest = {
   awayTeamGoals: 9
 }
 
-const matchFoundById = {
-  id: 49,
-  homeTeamId: 1,
-  homeTeamGoals: 12,
-  awayTeamId: 2,
-  awayTeamGoals: 9,
-  inProgress: true
-}
+// const homeMatchFoundById = {
+//   id: 49,
+//   homeTeamId: 1,
+//   homeTeamGoals: 12,
+//   awayTeamId: 2,
+//   awayTeamGoals: 9,
+//   inProgress: true
+// }
+
+// const awayMatchFoundById = {
+//   id: 9,
+//   homeTeamId: 1,
+//   homeTeamGoals: 12,
+//   awayTeamId: 2,
+//   awayTeamGoals: 9,
+//   inProgress: true
+// }
 
 export {
   macthes,
@@ -75,5 +84,4 @@ export {
   errorMsgUpdateMatch,
   createMatchModelResponse,
   createMatchBodyRequest,
-  matchFoundById,
 };
