@@ -24,6 +24,7 @@ export default class MatchService {
   }
 
   public async finishMatch(id: number): Promise<ServiceResponse<ServiceMessage>> {
+    // console.log('CHAMA FINISHED SERVICE');
     const modelResponse = await this.matchModel.finishMatch(id);
 
     if (!modelResponse) {

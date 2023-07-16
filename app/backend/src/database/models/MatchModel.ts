@@ -40,10 +40,14 @@ export default class MatchModel implements IMatchModel {
   }
 
   async finishMatch(id: number): Promise<number | null> {
+    // console.log('CHAMA FINISHED MODEL');
+
     const [dbData] = await this.model.update(
       { inProgress: false },
       { where: { id } },
     );
+
+    // console.log('DB DATA MODELFINISHED:', dbData);
 
     if (dbData === 0) {
       return null;
@@ -69,10 +73,6 @@ export default class MatchModel implements IMatchModel {
   async create(newMatch: IMatchCreateBody): Promise<IMatch> {
     const { homeTeamId, awayTeamId, homeTeamGoals, awayTeamGoals } = newMatch;
 
-    // if (!MatchModel.isTeamsDifferent()) {
-    //   return null;
-    // }
-
     const dbData = await this.model.create({
       homeTeamId,
       homeTeamGoals,
@@ -80,7 +80,7 @@ export default class MatchModel implements IMatchModel {
       awayTeamGoals,
       inProgress: true,
     });
-    console.log('DATAVALUES:', dbData.dataValues);
+    // console.log('DATAVALUES:', dbData.dataValues);
 
     return dbData;
   }
