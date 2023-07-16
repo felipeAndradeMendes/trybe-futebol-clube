@@ -1,5 +1,5 @@
 import SequelizeMatch from './SequelizeMatch';
-import { IMatch, IMatchModel } from '../../Interfaces/Match';
+import { IMatch, IMatchModel, IUpdateMatchBody } from '../../Interfaces/Match';
 import SequelizeTeam from './SequelizeTeam';
 
 export default class MatchModel implements IMatchModel {
@@ -35,15 +35,6 @@ export default class MatchModel implements IMatchModel {
     return dbData;
   }
 
-  // async findAllInProgress(): Promise<IMatch[]> {
-  //   const dbData = await this.model.findAll(
-  //     {
-  //       where: { inProgress: true },
-  //     },
-  //   );
-  //   return dbData;
-  // }
-
   async finishMatch(id: number): Promise<number | null> {
     const [dbData] = await this.model.update(
       { inProgress: false },
@@ -53,7 +44,22 @@ export default class MatchModel implements IMatchModel {
     if (dbData === 0) {
       return null;
     }
+
+    return dbData;
+  }
+
+  async updateMatch(id: number, updatedGoals: IUpdateMatchBody): Promise<number | null> {
+    const { homeTeamGoals, awayTeamGoals } = updatedGoals;
+    const [dbData] = await this.model.update(
+      { homeTeamGoals, awayTeamGoals },
+      { where: { id } },
+    );
+
     console.log('DB DATA: ', dbData);
+
+    if (!dbData) {
+      return null;
+    }
 
     return dbData;
   }
