@@ -1,11 +1,22 @@
 import MatchModel from '../database/models/MatchModel';
-import { IMatch, IMatchModel, IUpdateMatchBody } from '../Interfaces/Match';
+import { IMatch, IMatchCreateBody, IMatchModel, IMatchUpdateBody } from '../Interfaces/Match';
 import { ServiceMessage, ServiceResponse } from '../Interfaces/ServiceResponse';
 
 export default class MatchService {
   constructor(
     private matchModel: IMatchModel = new MatchModel(),
   ) { }
+
+  private async teamsExists(homeTeamId: number, awayTeamId: number): Promise<boolean> {
+    const isHomeTeam = await this.matchModel.findById(homeTeamId);
+    const isAwayTeam = await this.matchModel.findById(awayTeamId);
+
+    if (isHomeTeam === null || isAwayTeam === null) {
+      return false;
+    }
+
+    return true;
+  }
 
   public async getAllMatches(matchProgress?: string): Promise<ServiceResponse<IMatch[]>> {
     const allMatches = await this.matchModel.findAll(matchProgress);
@@ -27,7 +38,7 @@ export default class MatchService {
     };
   }
 
-  public async updateMatch(id: number, updatedGoals: IUpdateMatchBody):
+  public async updateMatch(id: number, updatedGoals: IMatchUpdateBody):
   Promise<ServiceResponse<ServiceMessage | string>> {
     const modelResponse = await this.matchModel.updateMatch(id, updatedGoals);
 
@@ -41,6 +52,29 @@ export default class MatchService {
     return {
       status: 'SUCCESSFUL',
       data: 'ok',
+    };
+  }
+
+  public async createMatch(newMacth: IMatchCreateBody): Promise<ServiceResponse<IMatch | null>> {
+    const { homeTeamId, awayTeamId } = newMacth;
+    const validateTeamsExistence = await this.teamsExists(homeTeamId, awayTeamId);
+    const validateTeamsDifferent = MatchModel.isTeamsDifferent(homeTeamId, awayTeamId);
+
+    if (!validateTeamsDifferent) {
+      return {
+        status: 'UNPROCESSABLE_ENTITY',
+        data: { message: 'It is not possible to create a match with two equal teams' },
+      };
+    }
+
+    if (!validateTeamsExistence) {
+      return { status: 'NOT_FOUND', data: { message: 'There is no team with such id!' } };
+    }
+
+    const matchCreated = await this.matchModel.create(newMacth);
+    return {
+      status: 'SUCCESSFUL',
+      data: matchCreated,
     };
   }
 }

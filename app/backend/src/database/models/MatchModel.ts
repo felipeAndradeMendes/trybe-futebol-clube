@@ -1,5 +1,5 @@
 import SequelizeMatch from './SequelizeMatch';
-import { IMatch, IMatchModel, IUpdateMatchBody } from '../../Interfaces/Match';
+import { IMatch, IMatchCreateBody, IMatchModel, IMatchUpdateBody } from '../../Interfaces/Match';
 import SequelizeTeam from './SequelizeTeam';
 
 export default class MatchModel implements IMatchModel {
@@ -11,6 +11,10 @@ export default class MatchModel implements IMatchModel {
       match.inProgress.toString() === progress));
 
     return filterMatches;
+  }
+
+  static isTeamsDifferent(homeTeamId: number, awayTeamId: number): boolean {
+    return homeTeamId !== awayTeamId;
   }
 
   async findAll(matchProgress?: string): Promise<IMatch[]> {
@@ -48,14 +52,43 @@ export default class MatchModel implements IMatchModel {
     return dbData;
   }
 
-  async updateMatch(id: number, updatedGoals: IUpdateMatchBody): Promise<number | null> {
+  async updateMatch(id: number, updatedGoals: IMatchUpdateBody): Promise<number | null> {
     const { homeTeamGoals, awayTeamGoals } = updatedGoals;
     const [dbData] = await this.model.update(
       { homeTeamGoals, awayTeamGoals },
       { where: { id } },
     );
 
-    console.log('DB DATA: ', dbData);
+    if (!dbData) {
+      return null;
+    }
+
+    return dbData;
+  }
+
+  async create(newMatch: IMatchCreateBody): Promise<IMatch> {
+    const { homeTeamId, awayTeamId, homeTeamGoals, awayTeamGoals } = newMatch;
+
+    // if (!MatchModel.isTeamsDifferent()) {
+    //   return null;
+    // }
+
+    const dbData = await this.model.create({
+      homeTeamId,
+      homeTeamGoals,
+      awayTeamId,
+      awayTeamGoals,
+      inProgress: true,
+    });
+    console.log('DATAVALUES:', dbData.dataValues);
+
+    return dbData;
+  }
+
+  async findById(id: number): Promise<IMatch | null> {
+    const dbData = await this.model.findByPk(id);
+
+    console.log('TESTA TEAM ID PRA VER SE EXISTE:', dbData);
 
     if (!dbData) {
       return null;
