@@ -156,5 +156,7 @@ describe('TESTES ROTAS /MATCHES', () => {
     //   expect(status).to.equal(201);
     //   expect(body).to.deep.equal(createMatchModelResponse);
     // });
+
+    // Falta testar os erros de quando o time nao existe e de quando passa times iguais na requisição
   });
 });
