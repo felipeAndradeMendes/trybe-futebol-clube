@@ -14,14 +14,11 @@ import { macthes,
   errorMsgUpdateMatch,
   createMatchModelResponse,
   createMatchBodyRequest,
-  // matchFoundById,
 } from './mocks/match.mock';
 
 import * as jwt from 'jsonwebtoken';
-import MatchService from '../services/MatchService';
 import MatchModel from '../database/models/MatchModel';
 
-// import { Response } from 'superagent';
 
 chai.use(chaiHttp);
 

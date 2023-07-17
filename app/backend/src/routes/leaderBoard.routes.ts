@@ -1,6 +1,5 @@
 import { Request, Response, Router } from 'express';
 import LeaderBoardController from '../controllers/LeaderBoardController';
-// import LoginValidation from '../middlewares/LoginValidation';
 
 const leaderBoardController = new LeaderBoardController();
 const router = Router();
@@ -8,6 +7,11 @@ const router = Router();
 router.get(
   '/home',
   (req: Request, res: Response) => leaderBoardController.getHomeLeaderBoard(req, res),
+);
+
+router.get(
+  '/away',
+  (req: Request, res: Response) => leaderBoardController.getAwayLeaderBoard(req, res),
 );
 
 export default router;

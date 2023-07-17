@@ -1,6 +1,8 @@
 import { IMatch } from '../Interfaces/Match';
-import { ILeaderBoardResponse } from '../Interfaces/LeaderBoard';
+import { ILeaderBoardResponse, Local } from '../Interfaces/LeaderBoard';
 import { ITeam } from '../Interfaces/Team';
+
+// type LocalTeamIndex = 'homeTeamId' | 'awayTeamId';
 
 export default class LeaderBoardBuild {
   // static tName = '';
@@ -71,50 +73,48 @@ export default class LeaderBoardBuild {
     return totalDraws;
   }
 
+  // Implementado com ajuda do GTP
   static sortLeaderBoard(result: ILeaderBoardResponse[]) {
     result.sort((a, b) => {
-      // Sort by Total Points (descending order)
       if (b.totalPoints !== a.totalPoints) {
         return b.totalPoints - a.totalPoints;
       }
 
-      // If total points are the same, apply tie-breaking criteria
-      // 1. Total Victories (descending order)
       if (b.totalVictories !== a.totalVictories) {
         return b.totalVictories - a.totalVictories;
       }
 
-      // 2. Goals Balance (descending order)
       if (b.goalsBalance !== a.goalsBalance) {
         return b.goalsBalance - a.goalsBalance;
       }
 
-      // 3. Goals Favor (descending order)
       return b.goalsFavor - a.goalsFavor;
     });
     return result;
   }
 
-  static buildHomeBoard(matches: IMatch[], teams: ITeam[]): ILeaderBoardResponse[] {
+  static buildHomeBoard(local: Local, matches: IMatch[], teams: ITeam[]): ILeaderBoardResponse[] {
     const result: ILeaderBoardResponse[] = [];
+
     teams.forEach((team) => {
-      const homeMatches = matches.filter((match) => match.homeTeamId === team.id);
+      // const homeMatches = matches.filter((match) => match.homeTeamId === team.id);
+      const localMatches = matches.filter((match) => match[`${local}TeamId`] === team.id);
+
       result.push({
         name: team.teamName,
-        totalPoints: this.calculateTotalPoints(homeMatches),
-        totalGames: homeMatches.length,
-        totalVictories: LeaderBoardBuild.calculateVictories(homeMatches),
-        totalDraws: LeaderBoardBuild.calculateDraws(homeMatches),
-        totalLosses: LeaderBoardBuild.calculateLosses(homeMatches),
-        goalsFavor: LeaderBoardBuild.calculateGoalsFavor(homeMatches),
-        goalsOwn: LeaderBoardBuild.calculateGoalsOwn(homeMatches),
-        goalsBalance: LeaderBoardBuild.calculateBalance(homeMatches),
-        efficiency: LeaderBoardBuild.calculateEfficiency(homeMatches),
+        totalPoints: this.calculateTotalPoints(localMatches),
+        totalGames: localMatches.length,
+        totalVictories: LeaderBoardBuild.calculateVictories(localMatches),
+        totalDraws: LeaderBoardBuild.calculateDraws(localMatches),
+        totalLosses: LeaderBoardBuild.calculateLosses(localMatches),
+        goalsFavor: LeaderBoardBuild.calculateGoalsFavor(localMatches),
+        goalsOwn: LeaderBoardBuild.calculateGoalsOwn(localMatches),
+        goalsBalance: LeaderBoardBuild.calculateBalance(localMatches),
+        efficiency: LeaderBoardBuild.calculateEfficiency(localMatches),
       });
     });
 
-    // result.sort((a, b) => b.totalPoints - a.totalPoints);
-    // return result;
     return LeaderBoardBuild.sortLeaderBoard(result);
   }
 }
+// ROTA AWAY AINDA RETORNA NA ORDER ERRADA. iNVESTIGAR O PROBLEMA;

@@ -3,7 +3,7 @@ import { IMatchModel } from '../Interfaces/Match';
 import MatchModel from '../database/models/MatchModel';
 import TeamModel from '../database/models/TeamModel';
 import LeaderBoardBuild from '../utils/LeaderBoardBuild';
-import { ILeaderBoardResponse } from '../Interfaces/LeaderBoard';
+import { ILeaderBoardResponse, Local } from '../Interfaces/LeaderBoard';
 
 export default class LeaderBoardService {
   constructor(
@@ -11,11 +11,11 @@ export default class LeaderBoardService {
     private teamModel: ITeamModel = new TeamModel(),
   ) { }
 
-  public async showLeaderBoard(): Promise<ILeaderBoardResponse[]> {
+  public async showLeaderBoard(local: Local): Promise<ILeaderBoardResponse[]> {
     const matches = await this.matchModel.findAll('false');
     const teams = await this.teamModel.findAll();
 
-    const result = LeaderBoardBuild.buildHomeBoard(matches, teams);
+    const result = LeaderBoardBuild.buildHomeBoard(local, matches, teams);
     return result;
   }
 }
