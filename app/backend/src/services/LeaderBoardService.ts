@@ -12,7 +12,7 @@ export default class LeaderBoardService {
   ) { }
 
   public async showLeaderBoard(): Promise<ILeaderBoardResponse[]> {
-    const matches = await this.matchModel.findAll();
+    const matches = await this.matchModel.findAll('false');
     const teams = await this.teamModel.findAll();
 
     const result = LeaderBoardBuild.buildHomeBoard(matches, teams);
