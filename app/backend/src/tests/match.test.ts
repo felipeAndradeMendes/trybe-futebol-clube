@@ -5,6 +5,7 @@ import chaiHttp = require('chai-http');
 
 import { app } from '../app';
 import SequelizeMatch from '../database/models/SequelizeMatch';
+import SequelizeTeam from '../database/models/SequelizeTeam';
 import { user, genericToken } from './mocks/login.mock'
 import { macthes,
   updateErrorResponse, 
@@ -18,6 +19,7 @@ import { macthes,
 
 import * as jwt from 'jsonwebtoken';
 import MatchService from '../services/MatchService';
+import MatchModel from '../database/models/MatchModel';
 
 // import { Response } from 'superagent';
 
@@ -145,18 +147,31 @@ describe('TESTES ROTAS /MATCHES', () => {
       expect(body).to.deep.equal(createMatchModelResponse);
     });
 
-    // it('Retorna erro quando um dos times nao existe no bd', async function () {
-    //   sinon.stub(SequelizeMatch, 'findByPk').resolves(matchFoundById)
-    //   const { status, body } = await chai
-    //   .request(app)
-    //   .post('/matches')
-    //   .send(createMatchBodyRequest)
-    //   .set('Authorization', genericToken);
+    it('Retorna erro quando um dos times nao existe no bd', async function () {
+      sinon.stub(SequelizeTeam, 'findByPk').resolves(null);
+      sinon.restore();
+      sinon.stub(SequelizeTeam, 'findByPk').resolves(null);
+      const { status, body } = await chai
+      .request(app)
+      .post('/matches')
+      .send(createMatchBodyRequest)
+      .set('Authorization', genericToken);
 
-    //   expect(status).to.equal(201);
-    //   expect(body).to.deep.equal(createMatchModelResponse);
-    // });
+      expect(status).to.equal(404);
+      expect(body).to.deep.equal({ message: 'There is no team with such id!' });
+    });
 
-    // Falta testar os erros de quando o time nao existe e de quando passa times iguais na requisição
+    it('Retorna erro quando são passados dois time iguais', async function () {
+      sinon.stub(MatchModel, 'isTeamsDifferent').returns(false);
+
+      const { status, body } = await chai
+      .request(app)
+      .post('/matches')
+      .send(createMatchBodyRequest)
+      .set('Authorization', genericToken);
+
+      expect(status).to.equal(422);
+      expect(body).to.deep.equal({ message: 'It is not possible to create a match with two equal teams' });
+    });
   });
 });
