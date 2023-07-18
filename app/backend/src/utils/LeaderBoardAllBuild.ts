@@ -4,9 +4,10 @@ import { ITeam } from '../Interfaces/Team';
 
 // type LocalTeamIndex = 'homeTeamId' | 'awayTeamId';
 
-export default class NewLeaderBoardBuild {
+export default class LeaderBoardBuildAll {
   private _localMatches: IMatch[] = [];
   private _otherLocal: Local = this.local === 'home' ? 'away' : 'home';
+  private mergedArrays: ILeaderBoardResponse[] = [];
 
   constructor(
     private local: Local = 'home',
@@ -14,35 +15,12 @@ export default class NewLeaderBoardBuild {
     private teams: ITeam[] = [],
   ) {}
 
-  // private calculateHomeTotalPoints(): number {
-  //   const totalPoints = this._localMatches.reduce((total, match) => {
-  //     if (match.homeTeamGoals > match.awayTeamGoals) {
-  //       return total + 3;
-  //     }
-  //     if (match.homeTeamGoals === match.awayTeamGoals) {
-  //       return total + 1;
-  //     }
-  //     return total;
-  //   }, 0);
-  //   return totalPoints;
-  // }
-
-  // private calculateAwayTotalPoints(): number {
-  //   const totalPoints = this._localMatches.reduce((total, match) => {
-  //     if (match.homeTeamGoals < match.awayTeamGoals) {
-  //       return total + 3;
-  //     }
-  //     if (match.homeTeamGoals === match.awayTeamGoals) {
-  //       return total + 1;
-  //     }
-  //     return total;
-  //   }, 0);
-  //   return totalPoints;
-  // }
-
   private calculateTotalPoints(): number {
+    // console.log('CALCULANDO TOTAL POINTS');
     const totalVictories = this.calculateVictories() * 3;
+    // console.log('TOTAL VICTORIES:', totalVictories);
     const totalDraws = this.calculateDraws();
+    // console.log('TOTAL DRAW:', totalDraws);
 
     return totalVictories + totalDraws;
   }
@@ -118,15 +96,57 @@ export default class NewLeaderBoardBuild {
     } else {
       this._localMatches = this.matches.filter((match) => match.awayTeamId === team.id);
     }
+
+    // this._localMatches = this.matches.filter((match) =>
+    //   match.homeTeamId === team.id || match.awayTeamId === team.id);
   }
 
-  public buildHomeBoard(): ILeaderBoardResponse[] {
+  private mergeArrays(allArray: ILeaderBoardResponse[]) {
+    // console.log('CHAMA MERGE ARRAYS!!!')
+    allArray.forEach((obj1) => {
+      const matchingObj = allArray.find((obj2) => obj2.name === obj1.name);
+      if (matchingObj) {
+        const mergedObj = {
+          name: obj1.name,
+          totalPoints: obj1.totalPoints + matchingObj.totalPoints,
+          totalGames: obj1.totalGames + matchingObj.totalGames,
+          totalVictories: obj1.totalVictories + matchingObj.totalVictories,
+          totalDraws: obj1.totalDraws + matchingObj.totalDraws,
+          totalLosses: obj1.totalLosses + matchingObj.totalLosses,
+          goalsFavor: obj1.goalsFavor + matchingObj.goalsFavor,
+          goalsOwn: obj1.goalsOwn + matchingObj.goalsOwn,
+          goalsBalance: obj1.goalsBalance + matchingObj.goalsBalance,
+          efficiency: (obj1.efficiency + matchingObj.efficiency) / 2,
+        };
+        this.mergedArrays.push(mergedObj);
+        // console.log('MERGED ARRAY:', this.mergedArrays)
+      }
+    });
+  }
+
+  public calculateAll() {
+    console.log('CHAMA CALCULAT ALL');
+    this.local = 'home';
+    console.log('THIS LOCAL:', this.local);
+    const homeResults: ILeaderBoardResponse[] = this.buildLocalBoard();
+    this.local = 'away';
+    console.log('THIS LOCAL:', this.local);
+    const awayResults: ILeaderBoardResponse[] = this.buildLocalBoard();
+    // LeaderBoardBuildAll.calculateFinal(homeResults, awayResults);
+    const allArray: ILeaderBoardResponse[] = [...homeResults, ...awayResults];
+    this.mergeArrays(allArray);
+
+    return this.mergedArrays;
+  }
+
+  public buildLocalBoard(): ILeaderBoardResponse[] {
     const result: ILeaderBoardResponse[] = [];
 
-    this.teams.forEach((team) => {
+    this.teams.forEach((team: ITeam) => {
       // const homeMatches = matches.filter((match) => match.homeTeamId === team.id);
       this.defineLocalMatches(team);
-
+      console.log('CHAMA BUILD');
+      // console.log('TEAM NAME:', team.teamName);
       result.push({
         name: team.teamName,
         totalPoints: this.calculateTotalPoints(),
@@ -141,7 +161,11 @@ export default class NewLeaderBoardBuild {
       });
     });
 
-    return NewLeaderBoardBuild.sortLeaderBoard(result);
+    return LeaderBoardBuildAll.sortLeaderBoard(result);
   }
 }
-// ROTA AWAY AINDA RETORNA NA ORDER ERRADA. iNVESTIGAR O PROBLEMA;
+
+/*
+Não consegui implementar uma logica que funciione dentro das limitações do projeto,
+que retorne o leaderBoard de todas as partidas...
+*/

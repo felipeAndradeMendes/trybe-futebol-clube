@@ -15,4 +15,9 @@ export default class LeaderBoardController {
     const serviceResponse = await this.leaderBoardService.showLeaderBoard('away');
     return res.status(200).json(serviceResponse);
   }
+
+  public async getAllLeaderBoard(req: Request, res: Response): Promise<Response> {
+    const serviceResponse = await this.leaderBoardService.showAllLeaderBoard();
+    return res.status(200).json(serviceResponse);
+  }
 }
