@@ -57,7 +57,6 @@ describe('TESTES ROTAS /MATCHES', () => {
   
     it('Retorna erro se partida não for encerrada ou se ja estiver encerrada', async function () {
       sinon.stub(jwt, 'sign').returns(user as any);
-      // const mockUpdateReturn = SequelizeMatch.build(null as any)
       sinon.stub(SequelizeMatch, 'update').resolves([updateErrorResponse] as any);
   
       const { status, body } = await chai
