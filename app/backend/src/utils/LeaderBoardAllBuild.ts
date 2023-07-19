@@ -101,42 +101,51 @@ export default class LeaderBoardBuildAll {
     //   match.homeTeamId === team.id || match.awayTeamId === team.id);
   }
 
-  private mergeArrays(allArray: ILeaderBoardResponse[]) {
+  static calculateEffciency(homeResult: ILeaderBoardResponse, awayResult: ILeaderBoardResponse) {
+    const totalPoints = homeResult.totalPoints + awayResult.totalPoints;
+    const totalGames = homeResult.totalGames + awayResult.totalGames;
+    const efficiency = (totalPoints / (totalGames * 3)) * 100;
+    return Number(efficiency.toFixed(2));
+  }
+
+  public mergeArrays(homeResults: ILeaderBoardResponse[], awayResults: ILeaderBoardResponse[]) {
     // console.log('CHAMA MERGE ARRAYS!!!')
-    allArray.forEach((obj1) => {
-      const matchingObj = allArray.find((obj2) => obj2.name === obj1.name);
-      if (matchingObj) {
+    homeResults.forEach((homeResult) => {
+      const matchTeam = awayResults.find((team) => team.name === homeResult.name);
+      if (matchTeam) {
         const mergedObj = {
-          name: obj1.name,
-          totalPoints: obj1.totalPoints + matchingObj.totalPoints,
-          totalGames: obj1.totalGames + matchingObj.totalGames,
-          totalVictories: obj1.totalVictories + matchingObj.totalVictories,
-          totalDraws: obj1.totalDraws + matchingObj.totalDraws,
-          totalLosses: obj1.totalLosses + matchingObj.totalLosses,
-          goalsFavor: obj1.goalsFavor + matchingObj.goalsFavor,
-          goalsOwn: obj1.goalsOwn + matchingObj.goalsOwn,
-          goalsBalance: obj1.goalsBalance + matchingObj.goalsBalance,
-          efficiency: (obj1.efficiency + matchingObj.efficiency) / 2,
+          name: homeResult.name,
+          totalPoints: homeResult.totalPoints + matchTeam.totalPoints,
+          totalGames: homeResult.totalGames + matchTeam.totalGames,
+          totalVictories: homeResult.totalVictories + matchTeam.totalVictories,
+          totalDraws: homeResult.totalDraws + matchTeam.totalDraws,
+          totalLosses: homeResult.totalLosses + matchTeam.totalLosses,
+          goalsFavor: homeResult.goalsFavor + matchTeam.goalsFavor,
+          goalsOwn: homeResult.goalsOwn + matchTeam.goalsOwn,
+          goalsBalance: homeResult.goalsBalance + matchTeam.goalsBalance,
+          efficiency: LeaderBoardBuildAll.calculateEffciency(homeResult, matchTeam),
         };
         this.mergedArrays.push(mergedObj);
-        // console.log('MERGED ARRAY:', this.mergedArrays)
       }
     });
   }
 
   public calculateAll() {
-    console.log('CHAMA CALCULAT ALL');
+    // console.log('CHAMA CALCULATE ALL');
     this.local = 'home';
-    console.log('THIS LOCAL:', this.local);
+    this._otherLocal = 'away';
+    // console.log('THIS LOCAL:', this.local);
     const homeResults: ILeaderBoardResponse[] = this.buildLocalBoard();
     this.local = 'away';
-    console.log('THIS LOCAL:', this.local);
+    this._otherLocal = 'home';
+    // console.log('THIS LOCAL:', this.local);
+    // console.log('HOME RESULTS -------> ', homeResults);
     const awayResults: ILeaderBoardResponse[] = this.buildLocalBoard();
-    // LeaderBoardBuildAll.calculateFinal(homeResults, awayResults);
-    const allArray: ILeaderBoardResponse[] = [...homeResults, ...awayResults];
-    this.mergeArrays(allArray);
+    // console.log('AWAY RESULTS -------> ', awayResults);
+    this.mergeArrays(homeResults, awayResults);
 
-    return this.mergedArrays;
+    // return this.mergedArrays;
+    return LeaderBoardBuildAll.sortLeaderBoard(this.mergedArrays);
   }
 
   public buildLocalBoard(): ILeaderBoardResponse[] {
@@ -145,7 +154,7 @@ export default class LeaderBoardBuildAll {
     this.teams.forEach((team: ITeam) => {
       // const homeMatches = matches.filter((match) => match.homeTeamId === team.id);
       this.defineLocalMatches(team);
-      console.log('CHAMA BUILD');
+      // console.log('CHAMA BUILD');
       // console.log('TEAM NAME:', team.teamName);
       result.push({
         name: team.teamName,
