@@ -15,8 +15,6 @@ export default class MatchController {
   }
 
   public async finishMatch(req: Request, res: Response): Promise<Response> {
-    // console.log('CHAMA FINISHED CONTROLLER');
-
     const { id } = req.params;
 
     const serviceResponse = await this.matchService.finishMatch(Number(id));

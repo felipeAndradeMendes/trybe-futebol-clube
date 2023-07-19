@@ -20,12 +20,10 @@ export default class LoginController {
     }
 
     const verifyPassword = await BcryptUtils.compare(password, serviceResponse.data.password);
-    // console.log('VERIFY PASSWORD:', verifyPassword);
     if (!verifyPassword) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    // console.log(serviceResponse);
     const token = this.jwtToken.sign(serviceResponse.data);
     return res.status(200).json({ token });
   }

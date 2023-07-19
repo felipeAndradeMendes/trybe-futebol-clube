@@ -7,6 +7,8 @@ import { ITeam } from '../Interfaces/Team';
 export default class LeaderBoardBuild {
   private _localMatches: IMatch[] = [];
   private _otherLocal: Local = this.local === 'home' ? 'away' : 'home';
+  // NOVO
+  private mergedArrays: ILeaderBoardResponse[] = [];
 
   constructor(
     private local: Local = 'home',
@@ -94,7 +96,53 @@ export default class LeaderBoardBuild {
     }
   }
 
-  public buildHomeBoard(): ILeaderBoardResponse[] {
+  // NOVO
+  static calculateAllEfficiency(
+    homeResult: ILeaderBoardResponse,
+    awayResult: ILeaderBoardResponse,
+  ) {
+    const totalPoints = homeResult.totalPoints + awayResult.totalPoints;
+    const totalGames = homeResult.totalGames + awayResult.totalGames;
+    const efficiency = (totalPoints / (totalGames * 3)) * 100;
+    return Number(efficiency.toFixed(2));
+  }
+
+  // NOVO
+  public mergeArrays(homeResults: ILeaderBoardResponse[], awayResults: ILeaderBoardResponse[]) {
+    // console.log('CHAMA MERGE ARRAYS!!!')
+    homeResults.forEach((homeResult) => {
+      const matchTeam = awayResults.find((team) => team.name === homeResult.name);
+      if (matchTeam) {
+        const mergedObj = {
+          name: homeResult.name,
+          totalPoints: homeResult.totalPoints + matchTeam.totalPoints,
+          totalGames: homeResult.totalGames + matchTeam.totalGames,
+          totalVictories: homeResult.totalVictories + matchTeam.totalVictories,
+          totalDraws: homeResult.totalDraws + matchTeam.totalDraws,
+          totalLosses: homeResult.totalLosses + matchTeam.totalLosses,
+          goalsFavor: homeResult.goalsFavor + matchTeam.goalsFavor,
+          goalsOwn: homeResult.goalsOwn + matchTeam.goalsOwn,
+          goalsBalance: homeResult.goalsBalance + matchTeam.goalsBalance,
+          efficiency: LeaderBoardBuild.calculateAllEfficiency(homeResult, matchTeam),
+        };
+        this.mergedArrays.push(mergedObj);
+      }
+    });
+  }
+
+  public calculateAll() {
+    this.local = 'home';
+    this._otherLocal = 'away';
+    const homeResults: ILeaderBoardResponse[] = this.buildLocalBoard();
+    this.local = 'away';
+    this._otherLocal = 'home';
+    const awayResults: ILeaderBoardResponse[] = this.buildLocalBoard();
+    this.mergeArrays(homeResults, awayResults);
+
+    return LeaderBoardBuild.sortLeaderBoard(this.mergedArrays);
+  }
+
+  public buildLocalBoard(): ILeaderBoardResponse[] {
     const result: ILeaderBoardResponse[] = [];
 
     this.teams.forEach((team) => {

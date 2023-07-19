@@ -11,8 +11,4 @@ export interface ILeaderBoardResponse {
   efficiency: number
 }
 
-// export interface ILocal {
-//   local: 'home' | 'away';
-// }
-
 export type Local = 'home' | 'away';

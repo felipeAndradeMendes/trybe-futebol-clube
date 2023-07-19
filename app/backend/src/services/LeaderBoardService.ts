@@ -4,7 +4,7 @@ import MatchModel from '../database/models/MatchModel';
 import TeamModel from '../database/models/TeamModel';
 import { ILeaderBoardResponse, Local } from '../Interfaces/LeaderBoard';
 import LeaderBoardBuild from '../utils/LeaderBoardBuild';
-import LeaderBoardBuildAll from '../utils/LeaderBoardAllBuild';
+// import LeaderBoardBuildAll from '../utils/LeaderBoardAllBuild';
 
 export default class LeaderBoardService {
   constructor(
@@ -12,24 +12,28 @@ export default class LeaderBoardService {
     private teamModel: ITeamModel = new TeamModel(),
   ) { }
 
-  public async showLeaderBoard(local: Local): Promise<ILeaderBoardResponse[]> {
+  public async showLeaderBoard(local: Local, isAll?: string): Promise<ILeaderBoardResponse[]> {
     const matches = await this.matchModel.findAll('false');
     const teams = await this.teamModel.findAll();
+    const leaderBoardBuild = new LeaderBoardBuild(local, matches, teams);
+    if (isAll === 'all') {
+      const result = leaderBoardBuild.calculateAll();
+      return result;
+    }
 
     // const result = LeaderBoardBuild.buildHomeBoard(local, matches, teams);
-    const leaderBoardBuild = new LeaderBoardBuild(local, matches, teams);
-    const result = leaderBoardBuild.buildHomeBoard();
+    const result = leaderBoardBuild.buildLocalBoard();
 
     return result;
   }
 
-  public async showAllLeaderBoard(): Promise<ILeaderBoardResponse[]> {
-    const matches = await this.matchModel.findAll('false');
-    const teams = await this.teamModel.findAll();
+  // public async showAllLeaderBoard(): Promise<ILeaderBoardResponse[]> {
+  //   const matches = await this.matchModel.findAll('false');
+  //   const teams = await this.teamModel.findAll();
 
-    const leaderBoardBuildAll = new LeaderBoardBuildAll('home', matches, teams);
-    const result = leaderBoardBuildAll.calculateAll();
+  //   const leaderBoardBuildAll = new LeaderBoardBuildAll('home', matches, teams);
+  //   const result = leaderBoardBuildAll.calculateAll();
 
-    return result;
-  }
+  //   return result;
+  // }
 }

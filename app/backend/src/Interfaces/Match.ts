@@ -12,7 +12,6 @@ export interface IMatchModel {
   finishMatch(id: number): Promise<number | null>;
   updateMatch(id: number, updatedGoals: IMatchUpdateBody): Promise<number | null>;
   create(newMatch: IMatchCreateBody): Promise<IMatch | null>;
-  // findById(id: number): Promise<IMatch | null>;
 }
 
 export interface IMatchUpdateBody {

@@ -10,7 +10,6 @@ export default class UserModel implements IUserModel {
     if (!dbData) {
       return null;
     }
-    // console.log('DBDATA MODEL USER:', dbData);
     return dbData.dataValues;
   }
 }

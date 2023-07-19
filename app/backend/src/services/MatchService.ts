@@ -10,17 +10,6 @@ export default class MatchService {
     private teamModel: ITeamModel = new TeamModel(),
   ) { }
 
-  // private async teamsExists(homeTeamId: number, awayTeamId: number): Promise<boolean> {
-  //   const isHomeTeam = await this.matchModel.findById(homeTeamId);
-  //   const isAwayTeam = await this.matchModel.findById(awayTeamId);
-
-  //   if (isHomeTeam === null || isAwayTeam === null) {
-  //     return false;
-  //   }
-
-  //   return true;
-  // }
-
   private async teamsExists(homeTeamId: number, awayTeamId: number): Promise<boolean> {
     const isHomeTeam = await this.teamModel.findById(homeTeamId);
     const isAwayTeam = await this.teamModel.findById(awayTeamId);
@@ -38,7 +27,6 @@ export default class MatchService {
   }
 
   public async finishMatch(id: number): Promise<ServiceResponse<ServiceMessage>> {
-    // console.log('CHAMA FINISHED SERVICE');
     const modelResponse = await this.matchModel.finishMatch(id);
 
     if (!modelResponse) {
